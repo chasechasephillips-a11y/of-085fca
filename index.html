@@ -146,7 +146,7 @@
     <summary>📣 What to say at the door <span>▾</span></summary>
     <div class="body script">
       <p class="say"><b>Open:</b> “Hi, I’m <span id="s1">[name]</span>, a neighbor here in the Town of Middleton. I’m not selling anything — just gathering signatures on <span id="s2">[the issue]</span>. Got 30 seconds?”</p>
-      <p class="say"><b>The point:</b> “Basically <span id="s3">[what it does, one sentence]</span>. We need signatures from Town residents to <span id="s4">[get it on the ballot / to the Town Board]</span>.”</p>
+      <p class="say"><b>The point:</b> “Basically <span id="s3">[what it does, one sentence]</span>. We need signatures from Town residents to <span id="s4">put candidates on the ballot for the open MCPASD school board seats</span>.”</p>
       <p class="say"><b>The ask:</b> “Are you a registered voter here in the Town? Great — would you add your signature?” (Hand them the clipboard, pen ready.)</p>
       <p class="say"><b>Close:</b> “Thank you! Know any neighbors who’d care about this?”</p>
       <p style="font-size:13px;color:var(--mut)"><b style="color:var(--ink)">If they hesitate:</b><br>• “Busy” → “Just your name & address, 15 seconds.”<br>• “Does it obligate me?” → “No — it just asks that this be considered.”<br>• “I don’t know enough” → “Signing means residents get a say, not that you’ve decided.”<br>• Disagree? → “Thanks for hearing me out!” Move on.</p>
@@ -184,7 +184,7 @@ let S=load();
 
 function load(){
   try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.log)return d;}catch(e){}
-  return {petition:'Town of Middleton Petition',about:'[the issue]',organizer:'',contact:'',
+  return {petition:'Town of Middleton MCPASD School Board Petition',about:'the MCPASD school board',organizer:'',contact:'',
     myGoal:50,deadline:'2026-08-20',locality:'Middleton, WI',circulator:'',area:AREAS[0],areas:AREAS.slice(),log:[]};
 }
 function save(){localStorage.setItem(KEY,JSON.stringify(S));}
