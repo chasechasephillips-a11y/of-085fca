@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Petition">
+<meta name="theme-color" content="#16432f">
+<title>Petition Circulator</title>
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%2316432f'/%3E%3Ctext x='90' y='122' font-size='96' text-anchor='middle' fill='%23fff' font-family='Arial'%3E%E2%9C%92%3C/text%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#0f2a1f;--card:#16432f;--card2:#1d543b;--line:#2c6b4c;
+    --green:#3ddc84;--greenD:#22b56a;--amber:#ffc857;--red:#ff6b6b;
+    --ink:#f3fbf6;--mut:#9fc7b2;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0}
+  body{background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+    padding:env(safe-area-inset-top) 14px calc(env(safe-area-inset-bottom) + 16px);
+    -webkit-font-smoothing:antialiased;max-width:520px;margin:0 auto}
+  h1{font-size:16px;margin:14px 2px 0}
+  .sub{color:var(--mut);font-size:12px;margin:2px 2px 12px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:12px}
+  button{cursor:pointer;border:none;font-family:inherit}
+  input,select{font-size:16px;font-family:inherit}
+  /* setup */
+  #setup{display:flex;flex-direction:column;justify-content:center;min-height:80vh}
+  #setup h2{font-size:22px;margin:0 0 6px}
+  #setup p{color:var(--mut);font-size:14px;line-height:1.5;margin:0 0 18px}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+  .field input{width:100%;background:var(--card2);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .primary{background:linear-gradient(135deg,var(--green),var(--greenD));color:#06281a;font-weight:800;font-size:18px;padding:17px;border-radius:14px;width:100%}
+  .who{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:12px}
+  .who b{font-size:14px}.who span{font-size:11px;color:var(--mut)}
+  .who button{background:transparent;color:var(--green);font-size:12px;font-weight:700}
+  .bigrow{display:flex;align-items:flex-end;gap:10px;margin-bottom:10px}
+  .big{font-size:50px;font-weight:800;line-height:.9}
+  .of{color:var(--mut);font-size:17px;font-weight:700;padding-bottom:6px}
+  .bar{height:13px;background:#0c2418;border-radius:10px;overflow:hidden;border:1px solid var(--line)}
+  .fill{height:100%;background:linear-gradient(90deg,var(--greenD),var(--green));width:0%;transition:width .35s}
+  .stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px}
+  .stat{background:var(--card2);border-radius:12px;padding:9px 8px;text-align:center}
+  .stat b{display:block;font-size:20px}
+  .stat span{font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.4px}
+  .arealab{font-size:12px;color:var(--mut);margin:2px 2px 7px;text-transform:uppercase;letter-spacing:.5px}
+  .areawrap{display:flex;gap:8px}
+  .area{flex:1;background:var(--card2);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:13px;appearance:none}
+  .addbtn{background:var(--card2);border:1px solid var(--line);color:var(--green);border-radius:12px;width:50px;font-size:24px;font-weight:700}
+  .mapbtn{display:flex;align-items:center;justify-content:center;gap:8px;background:#2f86e0;color:#04223f;font-weight:800;font-size:15px;padding:14px;border-radius:12px;width:100%;margin-top:10px}
+  .safe{background:#3a2a0c;border:1px solid #6b531f;border-radius:12px;padding:10px 12px;font-size:12px;line-height:1.45;color:#ffe9b8;margin-top:10px}
+  .btns{display:grid;gap:10px;margin-top:14px}
+  .tap{display:flex;align-items:center;justify-content:space-between;padding:20px;border-radius:16px;font-weight:800;color:#06281a}
+  .tap small{font-size:12px;font-weight:700;opacity:.8;display:block;margin-top:2px}
+  .tap .n{font-size:24px;font-weight:900;background:rgba(0,0,0,.16);border-radius:10px;min-width:44px;text-align:center;padding:4px 8px}
+  .sig{background:linear-gradient(135deg,var(--green),var(--greenD));font-size:21px}
+  .door{background:#cfe8d8;font-size:18px}
+  .nh{background:var(--amber);font-size:18px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+  .ghost{background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:14px;padding:14px;font-size:14px;font-weight:700}
+  .ghost.warn{color:var(--amber);border-color:#5b4a1f}
+  .send{background:linear-gradient(135deg,#5ab0ff,#2f86e0);color:#04223f;font-weight:800;font-size:16px;padding:16px;border-radius:14px;width:100%;margin-top:2px}
+  details{margin-bottom:12px}
+  summary{list-style:none;padding:15px;background:var(--card);border:1px solid var(--line);border-radius:14px;font-weight:700;font-size:14px;display:flex;justify-content:space-between}
+  summary::-webkit-details-marker{display:none}
+  .body{padding:4px 16px 14px}
+  .script p{font-size:14px;line-height:1.55;margin:10px 0}
+  .script .say{background:var(--card2);border-left:3px solid var(--green);border-radius:0 10px 10px 0;padding:10px 12px;font-size:14px;line-height:1.5;margin:8px 0}
+  .script b{color:var(--green)}
+  .rule{background:#3a2a0c;border:1px solid #6b531f;border-radius:12px;padding:12px;font-size:13px;line-height:1.5;color:#ffe9b8;margin-top:8px}
+  .set{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+  .set:last-child{border:none}
+  .set label{font-size:13px}.set input{background:var(--card2);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:9px;width:150px;text-align:right}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  td,th{text-align:left;padding:7px 4px;border-bottom:1px solid var(--line)}
+  th{color:var(--mut);font-weight:600;font-size:11px;text-transform:uppercase}
+  td.num{text-align:right;font-variant-numeric:tabular-nums}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(80px);background:#06281a;border:1px solid var(--green);color:var(--green);padding:11px 18px;border-radius:30px;font-weight:700;font-size:14px;opacity:0;transition:.25s;pointer-events:none;z-index:9}
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  .hint{font-size:11px;color:var(--mut);text-align:center;margin:8px 0 2px}
+  .hide{display:none}
+</style>
+</head>
+<body>
+
+<!-- SETUP -->
+<div id="setup" class="hide">
+  <h2 id="setupTitle">Welcome 👋</h2>
+  <p id="setupMsg"></p>
+  <div class="field">
+    <label>Your name (the circulator)</label>
+    <input id="nameIn" placeholder="e.g. Sam Rivera" autocomplete="name">
+  </div>
+  <button class="primary" id="startBtn">Start collecting →</button>
+  <p class="hint">Tip: after this opens, tap Share → “Add to Home Screen” to use it like an app. Works with no signal.</p>
+</div>
+
+<!-- APP -->
+<div id="app" class="hide">
+  <h1 id="petTitle">Petition</h1>
+  <p class="sub" id="petSub"></p>
+
+  <div class="who">
+    <div><b id="whoName">—</b><br><span>circulating · tap to change</span></div>
+    <button id="changeName">Change</button>
+  </div>
+
+  <div class="card">
+    <div class="bigrow"><div class="big" id="myCount">0</div><div class="of">/ <span id="myGoal">50</span> my goal</div></div>
+    <div class="bar"><div class="fill" id="fill"></div></div>
+    <div class="stats">
+      <div class="stat"><b id="today">0</b><span>Today</span></div>
+      <div class="stat"><b id="doors">0</b><span>Doors</span></div>
+      <div class="stat"><b id="rate">0%</b><span>Sign rate</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="arealab">Street / area you’re on now</div>
+    <div class="areawrap">
+      <select class="area" id="area"></select>
+      <button class="addbtn" id="add" aria-label="Add area">+</button>
+    </div>
+    <button class="mapbtn" id="mapBtn">🧭 Open this street in Apple Maps</button>
+    <div class="safe">👥 <b>Youth volunteers:</b> work in <b>pairs</b>, daytime only, with an adult nearby. Skip any house that feels off — just move to the next one.</div>
+    <div class="btns">
+      <button class="tap sig" data-t="sig"><span>Got a signature!<small id="sigA">this area: 0</small></span><span class="n" id="sigC">0</span></button>
+      <button class="tap door" data-t="door"><span>Door knocked<small id="doorA">this area: 0</small></span><span class="n" id="doorC">0</span></button>
+      <button class="tap nh" data-t="nh"><span>Not home (leave hanger)<small id="nhA">this area: 0</small></span><span class="n" id="nhC">0</span></button>
+    </div>
+    <div class="row2">
+      <button class="ghost warn" id="undo">↶ Undo last</button>
+      <button class="ghost" id="resetDay">New day count</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <button class="send" id="send">📤 Send my totals to the organizer</button>
+    <p class="hint" id="sendHint">Do this at the end of each shift.</p>
+  </div>
+
+  <details open>
+    <summary>📣 What to say at the door <span>▾</span></summary>
+    <div class="body script">
+      <p class="say"><b>Open:</b> “Hi, I’m <span id="s1">[name]</span>, a neighbor here in the Town of Middleton. I’m not selling anything — just gathering signatures on <span id="s2">[the issue]</span>. Got 30 seconds?”</p>
+      <p class="say"><b>The point:</b> “Basically <span id="s3">[what it does, one sentence]</span>. We need signatures from Town residents to <span id="s4">[get it on the ballot / to the Town Board]</span>.”</p>
+      <p class="say"><b>The ask:</b> “Are you a registered voter here in the Town? Great — would you add your signature?” (Hand them the clipboard, pen ready.)</p>
+      <p class="say"><b>Close:</b> “Thank you! Know any neighbors who’d care about this?”</p>
+      <p style="font-size:13px;color:var(--mut)"><b style="color:var(--ink)">If they hesitate:</b><br>• “Busy” → “Just your name & address, 15 seconds.”<br>• “Does it obligate me?” → “No — it just asks that this be considered.”<br>• “I don’t know enough” → “Signing means residents get a say, not that you’ve decided.”<br>• Disagree? → “Thanks for hearing me out!” Move on.</p>
+      <div class="rule"><b>⚠ Make signatures count:</b> signer must be a <b>registered voter in the Town of Middleton</b> and should sign <b>in front of you</b>. Get a legible name, full address, and date. No home? Leave a door hanger and tap “Not home.”</div>
+    </div>
+  </details>
+
+  <details>
+    <summary>📍 Area breakdown <span>▾</span></summary>
+    <div class="body"><table id="breakdown"><thead><tr><th>Area</th><th class="num">Sigs</th><th class="num">Doors</th><th class="num">N/H</th></tr></thead><tbody></tbody></table></div>
+  </details>
+
+  <details>
+    <summary>⚙️ Organizer setup <span>▾</span></summary>
+    <div class="body">
+      <div class="set"><label>Petition name</label><input id="setPet"></div>
+      <div class="set"><label>What it’s about</label><input id="setAbout"></div>
+      <div class="set"><label>Organizer name</label><input id="setOrg"></div>
+      <div class="set"><label>Send totals to (email/phone)</label><input id="setContact"></div>
+      <div class="set"><label>This person’s goal</label><input id="setMyGoal" type="number" inputmode="numeric"></div>
+      <div class="set"><label>Town/city for Maps</label><input id="setLocality"></div>
+      <div class="set"><label>Deadline</label><input id="setDeadline" type="date"></div>
+      <div class="set"><label style="color:var(--red)">Erase this phone’s data</label><button class="ghost" style="color:var(--red);border-color:#5b1f1f;width:120px" id="reset">Erase</button></div>
+      <p class="hint">Set these once before handing the phone over. They stay saved.</p>
+    </div>
+  </details>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY='mdtn_circulator_v1';
+const AREAS=['English Daisy Ct','Spruce Hollow','Pleasant View Rd','Twin Valley','Schewe Rd','Misty Valley','Old Sauk Rd','Mineral Point Rd','Airport Rd','Rural — north','Rural — west','Rural — south','Market / event'];
+let S=load();
+
+function load(){
+  try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.log)return d;}catch(e){}
+  return {petition:'Town of Middleton Petition',about:'[the issue]',organizer:'',contact:'',
+    myGoal:50,deadline:'2026-08-20',locality:'Middleton, WI',circulator:'',area:AREAS[0],areas:AREAS.slice(),log:[]};
+}
+function save(){localStorage.setItem(KEY,JSON.stringify(S));}
+function counts(f){const c={sig:0,door:0,nh:0};for(const e of S.log){if(f&&!f(e))continue;if(c[e.type]!=null)c[e.type]++;}return c;}
+function todayStr(){return new Date().toDateString();}
+
+function boot(){
+  if(!S.circulator){
+    document.getElementById('setup').classList.remove('hide');
+    document.getElementById('setupMsg').textContent='You’re collecting signatures for “'+S.petition+'.” Type your name so your totals can be tracked, then you’re ready.';
+  }else{
+    document.getElementById('app').classList.remove('hide');
+    render();
+  }
+}
+function render(){
+  const me=counts(), today=counts(e=>new Date(e.ts).toDateString()===todayStr()), area=counts(e=>e.area===S.area);
+  document.getElementById('petTitle').textContent=S.petition;
+  const dl=new Date(S.deadline+'T23:59:59'); const days=Math.max(0,Math.ceil((dl-new Date())/86400000));
+  document.getElementById('petSub').textContent=S.about+' · deadline '+new Date(S.deadline+'T12:00').toLocaleDateString(undefined,{month:'short',day:'numeric'})+' ('+days+' days left)';
+  document.getElementById('whoName').textContent=S.circulator||'—';
+  document.getElementById('myCount').textContent=me.sig;
+  document.getElementById('myGoal').textContent=S.myGoal;
+  document.getElementById('fill').style.width=Math.min(100,S.myGoal?me.sig/S.myGoal*100:0)+'%';
+  document.getElementById('today').textContent=today.sig;
+  document.getElementById('doors').textContent=me.door;
+  document.getElementById('rate').textContent=(me.door?Math.round(me.sig/me.door*100):0)+'%';
+  document.getElementById('sigC').textContent=me.sig;
+  document.getElementById('doorC').textContent=me.door;
+  document.getElementById('nhC').textContent=me.nh;
+  document.getElementById('sigA').textContent='this area: '+area.sig;
+  document.getElementById('doorA').textContent='this area: '+area.door;
+  document.getElementById('nhA').textContent='this area: '+area.nh;
+  document.getElementById('s1').textContent=S.circulator||'[name]';
+  document.getElementById('s2').textContent=S.about;document.getElementById('s3').textContent=S.about;
+  const sel=document.getElementById('area');
+  if(sel.childElementCount!==S.areas.length){sel.innerHTML='';S.areas.forEach(a=>{const o=document.createElement('option');o.value=a;o.textContent=a;sel.appendChild(o);});}
+  sel.value=S.area;
+  const tb=document.querySelector('#breakdown tbody');tb.innerHTML='';
+  const map={};S.areas.forEach(a=>map[a]={sig:0,door:0,nh:0});
+  S.log.forEach(e=>{if(!map[e.area])map[e.area]={sig:0,door:0,nh:0};if(map[e.area][e.type]!=null)map[e.area][e.type]++;});
+  Object.keys(map).filter(a=>map[a].sig||map[a].door||map[a].nh).forEach(a=>{const r=document.createElement('tr');r.innerHTML=`<td>${a}</td><td class="num">${map[a].sig}</td><td class="num">${map[a].door}</td><td class="num">${map[a].nh}</td>`;tb.appendChild(r);});
+  if(!tb.childElementCount)tb.innerHTML='<tr><td colspan="4" style="color:var(--mut)">Nothing logged yet.</td></tr>';
+}
+let tt;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),1400);}
+function buzz(){if(navigator.vibrate)navigator.vibrate(18);}
+
+document.getElementById('startBtn').addEventListener('click',()=>{
+  const n=document.getElementById('nameIn').value.trim();
+  if(!n)return toast('Please type your name');
+  S.circulator=n;save();
+  document.getElementById('setup').classList.add('hide');
+  document.getElementById('app').classList.remove('hide');render();
+});
+document.getElementById('changeName').addEventListener('click',()=>{const n=prompt('Circulator name:',S.circulator);if(n&&n.trim()){S.circulator=n.trim();save();render();}});
+document.querySelectorAll('.tap').forEach(b=>b.addEventListener('click',()=>{
+  const t=b.dataset.t;S.log.push({ts:Date.now(),type:t,area:S.area});
+  if(t==='sig')S.log.push({ts:Date.now(),type:'door',area:S.area,auto:1});
+  save();render();buzz();toast(t==='sig'?'✓ Signature logged!':t==='door'?'Door logged':'Not-home flagged');
+}));
+document.getElementById('undo').addEventListener('click',()=>{
+  if(!S.log.length)return toast('Nothing to undo');
+  S.log.pop();if(S.log.length&&S.log[S.log.length-1].auto)S.log.pop();
+  save();render();buzz();toast('Undid last entry');
+});
+document.getElementById('resetDay').addEventListener('click',()=>{toast('“Today” resets at midnight automatically');});
+document.getElementById('area').addEventListener('change',e=>{S.area=e.target.value;save();render();});
+document.getElementById('add').addEventListener('click',()=>{const n=prompt('Add a street or area:');if(n&&n.trim()){const v=n.trim();if(!S.areas.includes(v))S.areas.push(v);S.area=v;save();render();}});
+document.getElementById('mapBtn').addEventListener('click',()=>{location.href='https://maps.apple.com/?q='+encodeURIComponent(S.area+', '+S.locality);});
+function buildReport(){
+  const tot=counts();let csv='Area,Signatures,Doors,NotHome\n';
+  const map={};S.areas.forEach(a=>map[a]={sig:0,door:0,nh:0});
+  S.log.forEach(e=>{if(!map[e.area])map[e.area]={sig:0,door:0,nh:0};if(map[e.area][e.type]!=null)map[e.area][e.type]++;});
+  Object.keys(map).forEach(a=>{const m=map[a];if(m.sig||m.door||m.nh)csv+=`"${a}",${m.sig},${m.door},${m.nh}\n`;});
+  csv+=`TOTAL,${tot.sig},${tot.door},${tot.nh}\n`;
+  return {subject:`Petition totals — ${S.circulator}`,text:`Circulator: ${S.circulator}\nPetition: ${S.petition}\nSignatures: ${tot.sig} · Doors: ${tot.door} · Not-home: ${tot.nh}\n\n${csv}`};
+}
+document.getElementById('send').addEventListener('click',async()=>{
+  const r=buildReport();
+  if(navigator.share){try{await navigator.share({title:r.subject,text:r.text});return;}catch(e){}}
+  if(S.contact && S.contact.includes('@')){location.href=`mailto:${S.contact}?subject=${encodeURIComponent(r.subject)}&body=${encodeURIComponent(r.text)}`;return;}
+  try{await navigator.clipboard.writeText(r.text);toast('Totals copied — paste to your organizer');}catch(e){alert(r.text);}
+});
+const map2={setPet:'petition',setAbout:'about',setOrg:'organizer',setContact:'contact',setMyGoal:'myGoal',setLocality:'locality',setDeadline:'deadline'};
+Object.entries(map2).forEach(([id,k])=>{const el=document.getElementById(id);el.value=S[k];el.addEventListener('change',()=>{S[k]=(k==='myGoal')?Math.max(1,+el.value||50):el.value;save();render();});});
+document.getElementById('reset').addEventListener('click',()=>{if(confirm('Erase ALL data on this phone?')){localStorage.removeItem(KEY);S=load();location.reload();}});
+document.getElementById('sendHint').textContent='Sends to: '+(S.contact||'set this in Organizer setup');
+
+boot();
+</script>
+</body>
+</html>
