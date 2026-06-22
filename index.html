@@ -81,6 +81,8 @@
   .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(80px);background:#06281a;border:1px solid var(--green);color:var(--green);padding:11px 18px;border-radius:30px;font-weight:700;font-size:14px;opacity:0;transition:.25s;pointer-events:none;z-index:9}
   .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
   .hint{font-size:11px;color:var(--mut);text-align:center;margin:8px 0 2px}
+  .sitechip{display:block;text-align:center;background:var(--card2);border:1px solid var(--line);color:var(--green);text-decoration:none;font-weight:700;font-size:13px;padding:11px;border-radius:12px;margin-bottom:12px}
+  .script a{color:var(--green);font-weight:700;text-decoration:underline}
   .hide{display:none}
 </style>
 </head>
@@ -102,6 +104,7 @@
 <div id="app" class="hide">
   <h1 id="petTitle">Petition</h1>
   <p class="sub" id="petSub"></p>
+  <a id="siteTop" class="sitechip" href="#" target="_blank" rel="noopener">ℹ️ More info & FAQ — openseatsmcpasd.org</a>
 
   <div class="who">
     <div><b id="whoName">—</b><br><span>circulating · tap to change</span></div>
@@ -149,6 +152,7 @@
       <p class="say"><b>The point:</b> “Basically <span id="s3">[what it does, one sentence]</span>. We need signatures from Town residents to <span id="s4">put candidates on the ballot for the open MCPASD school board seats</span>.”</p>
       <p class="say"><b>The ask:</b> “Are you a registered voter here in the Town? Great — would you add your signature?” (Hand them the clipboard, pen ready.)</p>
       <p class="say"><b>Close:</b> “Thank you! Know any neighbors who’d care about this?”</p>
+      <p class="say"><b>More info:</b> “Want the full details? Everything’s at <a id="siteLink" href="#" target="_blank" rel="noopener">openseatsmcpasd.org</a> — there’s an FAQ, who’s running, and how to get involved.”</p>
       <p style="font-size:13px;color:var(--mut)"><b style="color:var(--ink)">If they hesitate:</b><br>• “Busy” → “Just your name & address, 15 seconds.”<br>• “Does it obligate me?” → “No — it just asks that this be considered.”<br>• “I don’t know enough” → “Signing means residents get a say, not that you’ve decided.”<br>• Disagree? → “Thanks for hearing me out!” Move on.</p>
       <div class="rule"><b>⚠ Make signatures count:</b> signer must be a <b>registered voter in the Town of Middleton</b> and should sign <b>in front of you</b>. Get a legible name, full address, and date. No home? Leave a door hanger and tap “Not home.”</div>
     </div>
@@ -168,6 +172,7 @@
       <div class="set"><label>Send totals to (email/phone)</label><input id="setContact"></div>
       <div class="set"><label>This person’s goal</label><input id="setMyGoal" type="number" inputmode="numeric"></div>
       <div class="set"><label>Town/city for Maps</label><input id="setLocality"></div>
+      <div class="set"><label>Info / FAQ website</label><input id="setSite"></div>
       <div class="set"><label>Deadline</label><input id="setDeadline" type="date"></div>
       <div class="set"><label style="color:var(--red)">Erase this phone’s data</label><button class="ghost" style="color:var(--red);border-color:#5b1f1f;width:120px" id="reset">Erase</button></div>
       <p class="hint">Set these once before handing the phone over. They stay saved.</p>
@@ -185,7 +190,7 @@ let S=load();
 function load(){
   try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.log)return d;}catch(e){}
   return {petition:'Town of Middleton MCPASD School Board Petition',about:'the MCPASD school board',organizer:'',contact:'',
-    myGoal:50,deadline:'2026-08-20',locality:'Middleton, WI',circulator:'',area:AREAS[0],areas:AREAS.slice(),log:[]};
+    myGoal:50,deadline:'2026-08-20',locality:'Middleton, WI',site:'openseatsmcpasd.org',circulator:'',area:AREAS[0],areas:AREAS.slice(),log:[]};
 }
 function save(){localStorage.setItem(KEY,JSON.stringify(S));}
 function counts(f){const c={sig:0,door:0,nh:0};for(const e of S.log){if(f&&!f(e))continue;if(c[e.type]!=null)c[e.type]++;}return c;}
@@ -220,6 +225,9 @@ function render(){
   document.getElementById('nhA').textContent='this area: '+area.nh;
   document.getElementById('s1').textContent=S.circulator||'[name]';
   document.getElementById('s2').textContent=S.about;document.getElementById('s3').textContent=S.about;
+  const siteUrl='https://'+S.site.replace(/^https?:\/\//,'');
+  const sl=document.getElementById('siteLink');if(sl){sl.textContent=S.site;sl.href=siteUrl;}
+  const st=document.getElementById('siteTop');if(st){st.textContent='ℹ️ More info & FAQ — '+S.site;st.href=siteUrl;}
   const sel=document.getElementById('area');
   if(sel.childElementCount!==S.areas.length){sel.innerHTML='';S.areas.forEach(a=>{const o=document.createElement('option');o.value=a;o.textContent=a;sel.appendChild(o);});}
   sel.value=S.area;
@@ -268,7 +276,7 @@ document.getElementById('send').addEventListener('click',async()=>{
   if(S.contact && S.contact.includes('@')){location.href=`mailto:${S.contact}?subject=${encodeURIComponent(r.subject)}&body=${encodeURIComponent(r.text)}`;return;}
   try{await navigator.clipboard.writeText(r.text);toast('Totals copied — paste to your organizer');}catch(e){alert(r.text);}
 });
-const map2={setPet:'petition',setAbout:'about',setOrg:'organizer',setContact:'contact',setMyGoal:'myGoal',setLocality:'locality',setDeadline:'deadline'};
+const map2={setPet:'petition',setAbout:'about',setOrg:'organizer',setContact:'contact',setMyGoal:'myGoal',setLocality:'locality',setSite:'site',setDeadline:'deadline'};
 Object.entries(map2).forEach(([id,k])=>{const el=document.getElementById(id);el.value=S[k];el.addEventListener('change',()=>{S[k]=(k==='myGoal')?Math.max(1,+el.value||50):el.value;save();render();});});
 document.getElementById('reset').addEventListener('click',()=>{if(confirm('Erase ALL data on this phone?')){localStorage.removeItem(KEY);S=load();location.reload();}});
 document.getElementById('sendHint').textContent='Sends to: '+(S.contact||'set this in Organizer setup');
